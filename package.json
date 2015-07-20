@@ -1,0 +1,33 @@
+{
+  "name": "mdn-cli",
+  "version": "0.1.0",
+  "description": "Command-line utility for Mozilla Developer Network (MDN)",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ytang/mdn-cli.git"
+  },
+  "keywords": [
+    "mdn",
+    "cli"
+  ],
+  "author": "Yang Tang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ytang/mdn-cli/issues"
+  },
+  "homepage": "https://github.com/ytang/mdn-cli#readme",
+  "preferGlobal": true,
+  "bin": {
+    "mdn-cli": "index.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.0",
+    "commander": "^2.8.1",
+    "htmlparser2": "^3.8.3",
+    "lodash": "^3.10.0",
+    "request": "^2.59.0"
+  }
+}
