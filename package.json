@@ -1,6 +1,6 @@
 {
   "name": "mdn-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Command-line utility for Mozilla Developer Network (MDN)",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
