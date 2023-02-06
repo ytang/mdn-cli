@@ -10,6 +10,8 @@ const cssselect = require('css-select');
 var chalk = require('chalk');
 
 program
+    .option('--color', 'forcefully enable color')
+    .option('--no-color', 'forcefully disable color')
     .version('0.2.0')
     .usage('<search terms>')
     .parse(process.argv);
