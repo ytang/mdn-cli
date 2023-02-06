@@ -1,6 +1,6 @@
 {
   "name": "mdn-cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Command-line utility for Mozilla Developer Network (MDN)",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,8 +24,10 @@
     "mdn-cli": "index.js"
   },
   "dependencies": {
+    "axios": "^1.3.2",
     "chalk": "^2.4.2",
     "commander": "^2.8.1",
+    "css-select": "^5.1.0",
     "htmlparser2": "^3.8.3",
     "lodash": "^4.17.11",
     "request": "^2.59.0"
