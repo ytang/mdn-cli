@@ -2,44 +2,53 @@
 
 'use strict';
 
-var _ = require('lodash');
-var program = require('commander');
-var axios = require('axios');
-var htmlparser = require('htmlparser2');
+const _ = require('lodash');
+const program = require('commander');
+const axios = require('axios');
+const htmlparser = require('htmlparser2');
 const cssselect = require('css-select');
-var chalk = require('chalk');
+const chalk = require('chalk');
 
 program
-    .option('--color', 'forcefully enable color')
-    .option('--no-color', 'forcefully disable color')
-    .version('0.2.0')
-    .usage('<search terms>')
-    .parse(process.argv);
+  .option('--color', 'forcefully enable color')
+  .option('--no-color', 'forcefully disable color')
+  .version('0.2.0')
+  .usage('<search terms>')
+  .parse(process.argv);
 
 if (!program.args.length) {
   program.help();
 }
 
-var searchTerms = program.args.join(' ');
-var url = 'https://mdn.io/' + searchTerms;
+const searchTerms = program.args.join(' ');
+const url = 'https://mdn.io/' + searchTerms;
 
-axios.get(url).then(function (response) {
-    const { protocol, host } = response.request;
-    const dom = htmlparser.parseDOM(response.data);
-    const refresh = cssselect.selectOne('html > head > meta[http-equiv=refresh]', dom);
-    const pathParams = refresh.attribs.content.split('url=')[1];
-    const url = `${protocol}//${host}${pathParams}`;
-    return axios.get(url);
-}).then(function (response) {
-    const { protocol, host } = response.request;
-    const dom = htmlparser.parseDOM(response.data);
-    const refresh = cssselect.selectOne('html > body > noscript > META[http-equiv=refresh]', dom);
-    const url = refresh.attribs.content.split('URL=')[1];
-    return axios.get(url);
-}).then(function (response) {
+function ddgRedirect(response) {
+  const { protocol, host } = response.request;
   const dom = htmlparser.parseDOM(response.data);
-  var header, article;
+  const refresh = cssselect.selectOne(
+    'html > head > meta[http-equiv=refresh]',
+    dom
+  );
+  const pathParams = refresh.attribs.content.split('url=')[1];
+  const url = `${protocol}//${host}${pathParams}`;
+  return axios.get(url);
+}
 
+function mdnRedirect(response) {
+  const { protocol, host } = response.request;
+  const dom = htmlparser.parseDOM(response.data);
+  const refresh = cssselect.selectOne(
+    'html > body > noscript > META[http-equiv=refresh]',
+    dom
+  );
+  const url = refresh.attribs.content.split('URL=')[1];
+  return axios.get(url);
+}
+
+function mdnParse(response) {
+  const dom = htmlparser.parseDOM(response.data);
+  let header, article;
   (function walk(dom) {
     if (!article) {
       _.forEach(dom, function (elem) {
@@ -59,7 +68,6 @@ axios.get(url).then(function (response) {
     console.log(_.repeat('=', elem.data.length));
     console.log();
   });
-
   (function walk(dom, style, indent, pre) {
     _.forEach(dom, function (elem) {
       switch (elem.type) {
@@ -177,12 +185,12 @@ axios.get(url).then(function (response) {
           break;
         case 'text':
           if (pre) {
-            var lines = _.trim(elem.data, '\r\n').split(/\r?\n/);
-            for (var i = 0; i < lines.length; ++i) {
-              console.log(style('  ' + (i + 1) + '\t' + lines[i]));
+            const lines = _.trim(elem.data, '\r\n').split(/\r?\n/);
+            for (let i = 0; i < lines.length; ++i) {
+              console.log(style('  ' + '\t' + lines[i]));
             }
           } else {
-            var data = _.trim(elem.data, '\r\n');
+            const data = _.trim(elem.data, '\r\n');
             if (data.trim()) {
               process.stdout.write(style(_.unescape(data)));
             }
@@ -193,4 +201,5 @@ axios.get(url).then(function (response) {
       }
     });
   })(article, chalk.reset, 0);
-});
+}
+axios.get(url).then(ddgRedirect).then(mdnRedirect).then(mdnParse);
