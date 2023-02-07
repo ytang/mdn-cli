@@ -1,3 +1,6 @@
+package.json
+package-lock.json
+# .gitignore
 .idea/
 node_modules/
 *~
