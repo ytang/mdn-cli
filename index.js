@@ -2,12 +2,12 @@
 
 'use strict';
 
-var _ = require('lodash');
-var program = require('commander');
-var axios = require('axios');
-var htmlparser = require('htmlparser2');
+const _ = require('lodash');
+const program = require('commander');
+const axios = require('axios');
+const htmlparser = require('htmlparser2');
 const cssselect = require('css-select');
-var chalk = require('chalk');
+const chalk = require('chalk');
 
 program
   .option('--color', 'forcefully enable color')
@@ -20,8 +20,8 @@ if (!program.args.length) {
   program.help();
 }
 
-var searchTerms = program.args.join(' ');
-var url = 'https://mdn.io/' + searchTerms;
+const searchTerms = program.args.join(' ');
+const url = 'https://mdn.io/' + searchTerms;
 
 axios
   .get(url)
@@ -48,7 +48,7 @@ axios
   })
   .then(function (response) {
     const dom = htmlparser.parseDOM(response.data);
-    var header, article;
+    let header, article;
     (function walk(dom) {
       if (!article) {
         _.forEach(dom, function (elem) {
@@ -185,12 +185,12 @@ axios
             break;
           case 'text':
             if (pre) {
-              var lines = _.trim(elem.data, '\r\n').split(/\r?\n/);
-              for (var i = 0; i < lines.length; ++i) {
-                console.log(style('  ' + (i + 1) + '\t' + lines[i]));
+              const lines = _.trim(elem.data, '\r\n').split(/\r?\n/);
+              for (let i = 0; i < lines.length; ++i) {
+                console.log(style('  ' + '\t' + lines[i]));
               }
             } else {
-              var data = _.trim(elem.data, '\r\n');
+              const data = _.trim(elem.data, '\r\n');
               if (data.trim()) {
                 process.stdout.write(style(_.unescape(data)));
               }
