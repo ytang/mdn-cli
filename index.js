@@ -52,9 +52,7 @@ function mdnParse(response) {
   (function walk(dom) {
     if (!article) {
       _.forEach(dom, function (elem) {
-        if (elem.name === 'h1') {
-          header = elem.children;
-        } else if (elem.name === 'article') {
+        if (elem.name === 'article') {
           article = elem.children;
         } else {
           walk(elem.children);
@@ -63,11 +61,6 @@ function mdnParse(response) {
     }
   })(dom);
 
-  _.forEach(header, function (elem) {
-    console.log(elem.data);
-    console.log(_.repeat('=', elem.data.length));
-    console.log();
-  });
   (function walk(dom, style, indent, pre) {
     _.forEach(dom, function (elem) {
       switch (elem.type) {
@@ -98,9 +91,11 @@ function mdnParse(response) {
               walk(elem.children, style.italic, indent);
               break;
             case 'h1':
-              walk(elem.children, style.bold.underline, indent);
-              console.log();
-              console.log();
+              _.forEach(elem.children, function (elem) {
+                console.log(style.bold(elem.data));
+                console.log(style.bold(_.repeat('=', elem.data.length)));
+                console.log();
+              });
               break;
             case 'h2':
               if (elem.attribs.id !== 'try_it') {
@@ -125,8 +120,10 @@ function mdnParse(response) {
             case 'li':
               process.stdout.write(_.repeat(' ', indent) + '- ');
               walk(elem.children, style, indent);
-              console.log();
-              console.log();
+              if (_.findIndex(elem.children, ['name', 'ul']) === -1) {
+                console.log();
+                console.log();
+              }
               break;
             case 'p':
               if (elem.children.length) {
@@ -189,6 +186,10 @@ function mdnParse(response) {
               console.log();
               break;
             case 'ul':
+              if (elem.parent.name === 'li') {
+                console.log();
+                console.log();
+              }
               walk(elem.children, style, indent + 2);
               break;
             case 'var':
