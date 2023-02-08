@@ -5,9 +5,10 @@
 const _ = require('lodash');
 const program = require('commander');
 const axios = require('axios');
-const htmlparser = require('htmlparser2');
-const cssselect = require('css-select');
 const chalk = require('chalk');
+const cssselect = require('css-select');
+const he = require('he');
+const htmlparser = require('htmlparser2');
 const supportsHyperlinks = require('supports-hyperlinks');
 
 program
@@ -122,8 +123,9 @@ function mdnParse(response) {
               break;
             case 'h1':
               _.forEach(elem.children, function (elem) {
-                console.log(style.bold(elem.data));
-                console.log(style.bold(_.repeat('=', elem.data.length)));
+                const data = he.decode(elem.data);
+                console.log(style.bold(data));
+                console.log(style.bold(_.repeat('=', data.length)));
                 console.log();
               });
               break;
@@ -264,11 +266,11 @@ function mdnParse(response) {
           break;
         case 'text':
           if (pre) {
-            process.stdout.write(style(_.unescape(elem.data)));
+            process.stdout.write(style(he.decode(elem.data)));
           } else {
             const data = elem.data.replace(/\s+/g, ' ');
             if (data.trim() || (elem.prev && elem.prev.name === 'strong')) {
-              process.stdout.write(style(_.unescape(data)));
+              process.stdout.write(style(he.decode(data)));
             }
           }
           break;
