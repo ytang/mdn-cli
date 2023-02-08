@@ -191,6 +191,9 @@ function mdnParse(response) {
                 case 'token attr-value':
                   walk(elem.children, style.green, indent, pre);
                   break;
+                case 'token builtin class-name':
+                  walk(elem.children, style.magenta, indent, pre);
+                  break;
                 case 'token comment':
                   walk(elem.children, style.gray.italic, indent, pre);
                   break;
@@ -208,6 +211,9 @@ function mdnParse(response) {
                   break;
                 case 'token operator':
                   walk(elem.children, style.white, indent, pre);
+                  break;
+                case 'token parameter variable':
+                  walk(elem.children, style.cyan, indent, pre);
                   break;
                 case 'token punctuation':
                   walk(elem.children, style.white, indent, pre);
