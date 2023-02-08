@@ -14,6 +14,15 @@ npm install -g mdn-cli
 mdn-cli <search terms>
 ```
 
+## Options
+
+| Option               | Description                   |
+| -------------------- | ----------------------------- |
+| `--color`            | Forcefully enable color.      |
+| `--hyperlink=always` | Forcefully enable hyperlink.  |
+| `--no-color`         | Forcefully disable color.     |
+| `--no-hyperlink`     | Forcefully disable hyperlink. |
+
 ## Examples
 
 ```
