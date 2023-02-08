@@ -8,10 +8,13 @@ const axios = require('axios');
 const htmlparser = require('htmlparser2');
 const cssselect = require('css-select');
 const chalk = require('chalk');
+const supportsHyperlinks = require('supports-hyperlinks');
 
 program
   .option('--color', 'forcefully enable color')
+  .option('--hyperlink=always', 'forcefully enable hyperlink')
   .option('--no-color', 'forcefully disable color')
+  .option('--no-hyperlink', 'forcefully disable hyperlink')
   .version('0.2.0')
   .usage('<search terms>')
   .parse(process.argv);
@@ -66,6 +69,23 @@ function mdnParse(response) {
       switch (elem.type) {
         case 'tag':
           switch (elem.name) {
+            case 'a':
+              const hyperlink =
+                supportsHyperlinks.stdout &&
+                !_.startsWith(elem.attribs.href, '#');
+              if (hyperlink) {
+                process.stdout.write('\x1b]8;;');
+                if (!elem.attribs.href.includes('://')) {
+                  process.stdout.write('https://developer.mozilla.org');
+                }
+                process.stdout.write(elem.attribs.href);
+                process.stdout.write('\x1b\\');
+              }
+              walk(elem.children, style, indent);
+              if (hyperlink) {
+                process.stdout.write('\x1b]8;;\x1b\\');
+              }
+              break;
             case 'br':
               console.log();
               break;

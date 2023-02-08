@@ -30,7 +30,8 @@
     "css-select": "^5.1.0",
     "htmlparser2": "^3.8.3",
     "lodash": "^4.17.11",
-    "request": "^2.59.0"
+    "request": "^2.59.0",
+    "supports-hyperlinks": "^2.3.0"
   },
   "devDependencies": {
     "prettier": "2.8.3"
