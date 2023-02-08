@@ -80,76 +80,92 @@ function mdnParse(response) {
               walk(elem.children, style.blue, indent, pre);
               break;
             case 'dd':
-              process.stdout.write('  ');
-              walk(elem.children, style, indent);
-              console.log();
-              console.log();
+              walk(elem.children, style, indent + 2);
               break;
             case 'div':
-              if (elem.attribs.class !== 'htab') {
-                switch (elem.attribs.id) {
-                  case 'compat-desktop':
-                    console.log('Desktop');
-                    console.log('-------');
-                    break;
-                  case 'compat-mobile':
-                    console.log('Mobile');
-                    console.log('------');
-                    break;
-                }
+              if (elem.attribs.class === 'notecard warning') {
+                walk(elem.children, style.bgRed, indent);
+              } else if (elem.attribs.class !== 'metadata-content-container') {
                 walk(elem.children, style, indent);
               }
               break;
             case 'dt':
+              process.stdout.write(_.repeat(' ', indent));
               walk(elem.children, style, indent);
               console.log();
               break;
             case 'em':
               walk(elem.children, style.italic, indent);
               break;
-            case 'h2':
-              console.log();
-              walk(elem.children, style.red, indent);
+            case 'h1':
+              walk(elem.children, style.bold.underline, indent);
               console.log();
               console.log();
               break;
+            case 'h2':
+              if (elem.attribs.id !== 'try_it') {
+                console.log();
+                walk(elem.children, style.red.bold, indent);
+                console.log();
+                console.log();
+              }
+              break;
             case 'h3':
               console.log();
-              walk(elem.children, style.yellow, indent);
+              walk(elem.children, style.yellow.bold, indent);
               console.log();
               console.log();
               break;
             case 'h4':
               console.log();
-              walk(elem.children, style.green, indent);
+              walk(elem.children, style.green.bold, indent);
               console.log();
               console.log();
               break;
             case 'li':
-              console.log();
               process.stdout.write(_.repeat(' ', indent) + '- ');
               walk(elem.children, style, indent);
+              console.log();
               console.log();
               break;
             case 'p':
               if (elem.children.length) {
+                process.stdout.write(_.repeat(' ', indent));
                 walk(elem.children, style, indent);
                 console.log();
                 console.log();
               }
               break;
             case 'pre':
-              if (elem.attribs.class === 'syntaxbox') {
-                walk(elem.children, style, indent);
-                console.log();
-                console.log();
-              } else {
-                walk(elem.children, style, indent, true);
-                console.log();
-              }
+              walk(elem.children, style, indent, true);
+              console.log();
               break;
             case 'span':
-              walk(elem.children, style, indent);
+              switch (elem.attribs.class) {
+                case 'token keyword':
+                  walk(elem.children, style.magenta, indent);
+                  break;
+                case 'token function':
+                  walk(elem.children, style.red, indent);
+                  break;
+                case 'token number':
+                  walk(elem.children, style.yellow, indent);
+                  break;
+                case 'token string':
+                  walk(elem.children, style.green, indent);
+                  break;
+                case 'token literal-property property':
+                  walk(elem.children, style.cyan, indent);
+                  break;
+                case 'token comment':
+                  walk(elem.children, style.gray.italic, indent);
+                  break;
+                case 'badge inline optional':
+                  process.stdout.write(style.gray(' (Optional)'));
+                  break;
+                default:
+                  walk(elem.children, style, indent);
+              }
               if (elem.attribs.title) {
                 process.stdout.write(' ' + style.inverse(elem.attribs.title));
               }
@@ -174,7 +190,6 @@ function mdnParse(response) {
               break;
             case 'ul':
               walk(elem.children, style, indent + 2);
-              console.log();
               break;
             case 'var':
               walk(elem.children, style.underline, indent);
@@ -185,12 +200,9 @@ function mdnParse(response) {
           break;
         case 'text':
           if (pre) {
-            const lines = _.trim(elem.data, '\r\n').split(/\r?\n/);
-            for (let i = 0; i < lines.length; ++i) {
-              console.log(style('  ' + '\t' + lines[i]));
-            }
+            process.stdout.write(style(elem.data));
           } else {
-            const data = _.trim(elem.data, '\r\n');
+            const data = elem.data.replaceAll(/\s+/g, ' ');
             if (data.trim()) {
               process.stdout.write(style(_.unescape(data)));
             }
