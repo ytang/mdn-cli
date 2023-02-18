@@ -31,7 +31,6 @@
     "he": "^1.2.0",
     "htmlparser2": "^3.10.1",
     "lodash": "^4.17.21",
-    "request": "^2.59.0",
     "supports-hyperlinks": "^2.3.0"
   },
   "devDependencies": {
